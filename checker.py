@@ -85,7 +85,10 @@ def save_json(path, data):
 
 def fetch_page(url: str) -> str | None:
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
+        headers = dict(HEADERS)
+        headers["Referer"] = "https://www.google.com/"
+        session = requests.Session()
+        resp = session.get(url, headers=headers, timeout=15)
         resp.raise_for_status()
         # Một số trang Nhật (vd Fujifilm Mall) dùng bảng mã Shift-JIS/EUC-JP thay vì UTF-8.
         # Nếu không set đúng, chữ tiếng Nhật sẽ bị đọc sai (mojibake) -> không nhận diện được từ khóa.
@@ -246,12 +249,17 @@ def check_once(config: dict, state: dict):
 
         log.info(f"[{name}] -> {status}")
 
-        # DEBUG: nếu không nhận diện được trạng thái, in ra 1 đoạn text thật
-        # của trang để biết cấu trúc thực tế mà điều chỉnh từ khóa cho đúng
+        # DEBUG: nếu không nhận diện được trạng thái, in ra đoạn text quanh khu vực
+        # giá tiền (thường gần nút mua/trạng thái tồn kho) để biết cấu trúc thực tế
         if status == "unknown":
             soup_debug = BeautifulSoup(html, "html.parser")
             text_debug = soup_debug.get_text(" ", strip=True)
-            snippet = text_debug[:600]
+            log.info(f"  [DEBUG length - {name}]: tổng {len(text_debug)} ký tự")
+            idx = text_debug.find("円")  # tìm chỗ có giá tiền (vd 990円)
+            if idx == -1:
+                idx = len(text_debug) // 2  # fallback: lấy đoạn giữa trang
+            start = max(0, idx - 150)
+            snippet = text_debug[start:start + 900]
             log.info(f"  [DEBUG snippet - {name}]: {snippet}")
 
         # Chỉ báo khi chuyển từ (hết hàng/không rõ) -> còn hàng

@@ -137,6 +137,15 @@ def detect_stock_status(html: str, site: str) -> str:
             return "in_stock"
 
     elif site == "fujifilm_mall":
+        # Fujifilm Mall hiển thị trạng thái tồn kho trong thuộc tính "value" của nút bấm,
+        # vd: <input class="btn_cart_l_ inactive_" type="button" value="在庫なし">
+        m = re.search(r'class="btn_cart_l_[^"]*"\s+type="button"\s+value="([^"]+)"', html)
+        if m:
+            btn_value = m.group(1)
+            if "在庫なし" in btn_value or "売り切れ" in btn_value or "SOLD" in btn_value.upper():
+                return "out_of_stock"
+            if "カート" in btn_value or "購入" in btn_value or "在庫あり" in btn_value:
+                return "in_stock"
         if re.search(r"SOLD OUT|売り切れ", text, re.IGNORECASE):
             return "out_of_stock"
         if re.search(r"カートに入れる", text):
@@ -161,12 +170,14 @@ def detect_stock_status(html: str, site: str) -> str:
         if re.search(r"カートに入れる|買い物カゴに入れる", text):
             return "in_stock"
 
-    # --- Fallback: keyword matching chung ---
+    # --- Fallback: keyword matching chung (tìm cả trong text hiển thị lẫn HTML gốc,
+    # vì một số trang đặt trạng thái trong thuộc tính value=/alt= không hiện trong text) ---
+    combined = text + " " + html
     for kw in OUT_OF_STOCK_PATTERNS:
-        if kw in text:
+        if kw in combined:
             return "out_of_stock"
     for kw in IN_STOCK_PATTERNS:
-        if kw in text:
+        if kw in combined:
             return "in_stock"
 
     return "unknown"

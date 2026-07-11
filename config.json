@@ -1,0 +1,46 @@
+{
+  "check_interval_seconds": 300,
+  "notify_type": "telegram",
+  "products": [
+    {
+      "name": "instax mini フィルム 10枚入り (Amazon)",
+      "site": "amazon",
+      "url": "https://www.amazon.co.jp/dp/XXXXXXXXXX"
+    },
+    {
+      "name": "instax mini フィルム 10枚入り (Rakuten)",
+      "site": "rakuten",
+      "url": "https://item.rakuten.co.jp/SHOP_ID/ITEM_ID/"
+    },
+    {
+      "name": "instax mini フィルム (ヨドバシ)",
+      "site": "yodobashi",
+      "url": "https://www.yodobashi.com/product/XXXXXXXXX/"
+    },
+    {
+      "name": "instax mini フィルム (Yahoo!ショッピング)",
+      "site": "yahoo",
+      "url": "https://store.shopping.yahoo.co.jp/SHOP/ITEM.html"
+    },
+    {
+      "name": "instax mini フィルム (フジフイルムモール)",
+      "site": "fujifilm_mall",
+      "url": "https://fujifilmmall.jp/shop/g/gXXXXXXXX/"
+    },
+    {
+      "name": "instax mini フィルム (ビックカメラ.com)",
+      "site": "bigcamera",
+      "url": "https://www.biccamera.com/bc/item/XXXXXXX/"
+    },
+    {
+      "name": "instax mini フィルム (ソフマップ)",
+      "site": "sofmap",
+      "url": "https://www.sofmap.com/product_detail/pid/XXXXXXX/"
+    },
+    {
+      "name": "instax mini フィルム (ジョーシン)",
+      "site": "joshin",
+      "url": "https://joshinweb.jp/XXXXXXX.html"
+    }
+  ]
+}

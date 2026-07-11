@@ -246,6 +246,14 @@ def check_once(config: dict, state: dict):
 
         log.info(f"[{name}] -> {status}")
 
+        # DEBUG: nếu không nhận diện được trạng thái, in ra 1 đoạn text thật
+        # của trang để biết cấu trúc thực tế mà điều chỉnh từ khóa cho đúng
+        if status == "unknown":
+            soup_debug = BeautifulSoup(html, "html.parser")
+            text_debug = soup_debug.get_text(" ", strip=True)
+            snippet = text_debug[:600]
+            log.info(f"  [DEBUG snippet - {name}]: {snippet}")
+
         # Chỉ báo khi chuyển từ (hết hàng/không rõ) -> còn hàng
         if status == "in_stock" and prev_status != "in_stock":
             notify(config, name, url, status)

@@ -262,6 +262,14 @@ def check_once(config: dict, state: dict):
             snippet = text_debug[start:start + 900]
             log.info(f"  [DEBUG snippet - {name}]: {snippet}")
 
+            # Quét thêm trong HTML gốc (không chỉ text hiển thị) để tìm nút dạng ảnh
+            # (vd <input type="image" alt="カートに入れる">), vốn không xuất hiện trong get_text()
+            for kw in ["カート", "在庫", "SOLD", "売切", "売り切", "購入", "cart", "Cart"]:
+                pos = html.find(kw)
+                if pos != -1:
+                    ctx = html[max(0, pos - 100):pos + 100].replace("\n", " ")
+                    log.info(f"  [DEBUG html quanh '{kw}']: ...{ctx}...")
+
         # Chỉ báo khi chuyển từ (hết hàng/không rõ) -> còn hàng
         if status == "in_stock" and prev_status != "in_stock":
             notify(config, name, url, status)

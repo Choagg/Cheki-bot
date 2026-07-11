@@ -36,7 +36,15 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Language": "ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
 }
 
 # Các cụm từ tiếng Nhật báo hết hàng (ưu tiên kiểm tra trước, vì cụ thể hơn)
@@ -79,6 +87,10 @@ def fetch_page(url: str) -> str | None:
     try:
         resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
+        # Một số trang Nhật (vd Fujifilm Mall) dùng bảng mã Shift-JIS/EUC-JP thay vì UTF-8.
+        # Nếu không set đúng, chữ tiếng Nhật sẽ bị đọc sai (mojibake) -> không nhận diện được từ khóa.
+        if not resp.encoding or resp.encoding.lower() in ("iso-8859-1", "ascii"):
+            resp.encoding = resp.apparent_encoding
         return resp.text
     except requests.RequestException as e:
         log.warning(f"Lỗi khi tải {url}: {e}")
